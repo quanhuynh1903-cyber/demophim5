@@ -1,39 +1,73 @@
-import Link from 'next/link'
-import React, { FunctionComponent } from 'react'
+import streamlit as st
 
-interface PaginateProps {
-    pages: number
-    page: number
-    keyword: string
-}
+def paginate_component(total_pages, current_page, keyword=''):
+    """
+    Thay thế cho Paginate: FunctionComponent
+    """
+    if total_pages <= 1:
+        return current_page
 
-const Paginate: FunctionComponent<PaginateProps> = ({ pages, page, keyword }) => {
-    return pages > 1 ? (
-        <div className="flex flex-col items-center my-12">
-            <div className="flex text-gray-700">
-                <div className="h-12 w-12 mr-1 flex justify-center items-center rounded-full cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="feather feather-chevron-left w-6 h-6">
-                        <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                </div>
-                <div className="flex h-12 font-medium rounded-full">
-                    {[...Array(pages).keys()].map((x) => {
-                        const link = keyword ? `/search/${keyword}/page/${x + 1}` : `/page/${x + 1}`
-                        return (
-                            <Link href={link} key={x + 1}>
-                                <div className={`w-12 md:flex justify-center items-center hidden  cursor-pointer leading-5 transition duration-150 ease-in rounded-full text-white ${x + 1 === page && "bg-orange-600"}`}>{x + 1}</div>
-                            </Link>
-                        )
-                    })}
-                </div>
-                <div className="h-12 w-12 ml-1 flex justify-center items-center rounded-full cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="feather feather-chevron-right w-6 h-6">
-                        <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                </div>
-            </div>
-        </div>
-    ) : null
-}
+    st.markdown("""
+        <style>
+        .paginate-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 48px 0; /* my-12 */
+            gap: 5px;
+        }
+        .page-btn-active {
+            background-color: #ea580c !important; /* bg-orange-600 */
+            color: white !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-export default Paginate
+    # Tạo các cột để căn giữa thanh phân trang
+    _, center_col, _ = st.columns([1, 3, 1])
+
+    with center_col:
+        # Sử dụng container flexbox mô phỏng lại CSS của bản React
+        cols = st.columns(total_pages + 2) # +2 cho nút mũi tên trái/phải
+        
+        # Nút Previous (Mũi tên trái)
+        if cols[0].button("⟨", key="prev"):
+            if current_page > 1:
+                return current_page - 1
+
+        # Danh sách các số trang
+        for x in range(total_pages):
+            page_num = x + 1
+            # Nếu là trang hiện tại, làm nổi bật nút
+            is_active = "page-btn-active" if page_num == current_page else ""
+            
+            if cols[x+1].button(f"{page_num}", key=f"page_{page_num}"):
+                return page_num
+
+        # Nút Next (Mũi tên phải)
+        if cols[-1].button("⟩", key="next"):
+            if current_page < total_pages:
+                return current_page + 1
+                def main():
+    # Khởi tạo trang trong session_state
+    if 'current_page' not in st.session_state:
+        st.session_state.current_page = 1
+
+    # Giả sử bạn có 10 trang phim
+    total_pages = 10 
+    keyword = st.session_state.get('search_keyword', '')
+
+    # Hiển thị danh sách phim dựa trên st.session_state.current_page
+    st.write(f"Đang hiển thị trang: {st.session_state.current_page}")
+
+    # Gọi component phân trang
+    new_page = paginate_component(total_pages, st.session_state.current_page, keyword)
+    
+    # Nếu người dùng nhấn nút chuyển trang, cập nhật lại app
+    if new_page != st.session_state.current_page:
+        st.session_state.current_page = new_page
+        st.rerun()
+
+if __name__ == "__main__":
+    main()
+    return current_page
