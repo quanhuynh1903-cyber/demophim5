@@ -1,14 +1,20 @@
-export interface User {
-	_id: string
-	name: string
-	email: string
-	isAdmin: boolean
-}
+from dataclasses import dataclass
+from typing import Optional
 
-export interface TokenUser extends User {
-	token: string
-}
+@dataclass
+class User:
+    """Tương đương export interface User"""
+    id: str
+    name: str
+    email: str
+    is_admin: bool
 
-export interface PasswordUser extends User {
-	password: string
-}
+@dataclass
+class TokenUser(User):
+    """Tương đương export interface TokenUser"""
+    token: str
+
+@dataclass
+class PasswordUser(User):
+    """Tương đương export interface PasswordUser"""
+    password: str
