@@ -1,56 +1,38 @@
-export interface Actor {
-    _id: string
-    user: string
-    name: string
-    birth: string
-    sex: boolean
-    image: string
-    description: string
-    createdAt: string
-}
+from dataclasses import dataclass
+from typing import List, Optional
 
-export interface Movie {
-    _id: string
-    user: string
-    name: string
-    genres: string
-    image: string
-    description: string
-    actors: Array<Actor>
-    releasedAt: string
-    times: number
-    url: string
-    views: number
-	rating: number
-	numReviews: number
-	reviews: Array<Review>
-    createdAt: string
-}
+@dataclass
+class Review:
+    id: str
+    user: str
+    name: str
+    rating: float
+    comment: str
+    created_at: str
 
-export interface MovieDetail extends Movie {
-    reviews: Array<Review>
-}
+@dataclass
+class Actor:
+    id: str
+    name: str
+    birth: str
+    sex: bool
+    image: str
+    description: str
+    created_at: str
 
-export interface ActorDetail extends Actor {
-    movies: Array<Movie>
-}
-
-export interface Review {
-	_id: string
-	user: string
-	name: string
-	rating: number
-	comment: string
-	createdAt: string
-}
-
-export interface MovieList {
-    movies: Movie[]
-    pages: number
-    page: number
-}
-
-export interface CreateReviewInput {
-	rating: number
-	comment: string
-}
+@dataclass
+class Movie:
+    id: str
+    name: str
+    genres: str
+    image: str
+    description: str
+    actors: List[Actor]
+    released_at: str
+    times: int
+    url: str
+    views: int
+    rating: float
+    num_reviews: int
+    reviews: List[Review]
+    created_at: str
